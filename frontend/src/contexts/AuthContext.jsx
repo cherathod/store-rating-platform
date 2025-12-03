@@ -1,20 +1,19 @@
 import { createContext, useEffect, useState } from "react";
 import authAPI from "../api/authAPI";
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // {id, name, email, role}
+  const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("authToken") || "");
   const [loading, setLoading] = useState(true);
 
-  // Load user from token on refresh
   useEffect(() => {
     const loadUser = async () => {
       try {
         if (token) {
-          const res = await authAPI.getMe();
-          setUser(res.user);
+          const res = await authAPI.getProfile();
+          setUser(res.data.user);
         }
       } catch (err) {
         console.error("Token invalid or expired");
@@ -25,16 +24,16 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, [token]);
 
-  const login = async (email, password) => {
-    const res = await authAPI.login(email, password);
-
-    localStorage.setItem("authToken", res.token);
-    setToken(res.token);
-    setUser(res.user);
+  const login = async (data) => {
+    const res = await authAPI.login(data);
+    localStorage.setItem("authToken", res.data.token);
+    setToken(res.data.token);
+    setUser(res.data.user);
   };
 
-  const register = async (formData) => {
-    return await authAPI.register(formData);
+  const register = async (data) => {
+    const res = await authAPI.register(data);
+    return res.data;
   };
 
   const logout = () => {
@@ -52,10 +51,12 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         loading,
-        isAuthenticated: !!user
+        isAuthenticated: !!user,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
+
+export default AuthContext;

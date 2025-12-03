@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import InputField from "../components/InputField";
-import useAuth from "../hooks/useAuth";
+import AuthContext from "../contexts/AuthContext";
 import { validateRegisterForm } from "../utils/formValidators";
 
 const Register = () => {
-  const { register } = useAuth();
+  const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -31,7 +31,7 @@ const Register = () => {
     }
 
     try {
-      await register(form);
+      await register(form); // form is an object
       navigate("/login");
     } catch (err) {
       setErrors({ general: err.response?.data?.message || "Registration failed" });
@@ -41,47 +41,13 @@ const Register = () => {
   return (
     <div className="auth-container">
       <h2>Register</h2>
-
       <form onSubmit={handleRegister} className="auth-form">
-        <InputField
-          label="Name"
-          value={form.name}
-          onChange={(v) => updateForm("name", v)}
-          placeholder="Full name"
-          error={errors.name}
-        />
-
-        <InputField
-          label="Email"
-          type="email"
-          value={form.email}
-          onChange={(v) => updateForm("email", v)}
-          placeholder="Email address"
-          error={errors.email}
-        />
-
-        <InputField
-          label="Address"
-          value={form.address}
-          onChange={(v) => updateForm("address", v)}
-          placeholder="Home address"
-          error={errors.address}
-        />
-
-        <InputField
-          label="Password"
-          type="password"
-          value={form.password}
-          onChange={(v) => updateForm("password", v)}
-          placeholder="Create password"
-          error={errors.password}
-        />
-
+        <InputField label="Name" value={form.name} onChange={(v) => updateForm("name", v)} error={errors.name} />
+        <InputField label="Email" type="email" value={form.email} onChange={(v) => updateForm("email", v)} error={errors.email} />
+        <InputField label="Address" value={form.address} onChange={(v) => updateForm("address", v)} error={errors.address} />
+        <InputField label="Password" type="password" value={form.password} onChange={(v) => updateForm("password", v)} error={errors.password} />
         {errors.general && <p className="error">{errors.general}</p>}
-
-        <button className="btn-primary" type="submit">
-          Create Account
-        </button>
+        <button className="btn-primary" type="submit">Create Account</button>
       </form>
     </div>
   );
