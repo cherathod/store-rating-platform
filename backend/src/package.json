@@ -1,5 +1,0 @@
-"scripts": {
-  "dev": "nodemon --watch src --exec node src/index.js",
-  "start": "node src/index.js",
-  "db:sync": "node src/utils/sync-db.js"
-}
