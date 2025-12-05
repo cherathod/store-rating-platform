@@ -1,10 +1,10 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../config/database');
+const sequelize = require('../config/db');
 
 
-const User = require('./user.model')(sequelize, Sequelize.DataTypes);
-const Store = require('./store.model')(sequelize, Sequelize.DataTypes);
-const Rating = require('./rating.model')(sequelize, Sequelize.DataTypes);
+const User = require('../models/user_model')(sequelize, Sequelize.DataTypes);
+const Store = require('../models/store_model')(sequelize, Sequelize.DataTypes);
+const Rating = require('../models/rating_model')(sequelize, Sequelize.DataTypes);
 
 
 User.hasMany(Store, { foreignKey: 'owner_id', as: 'stores' });
